@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>MPIN Strength Checker</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f0f4f8; }
+        h1 { color: #333; }
+        form { background: white; padding: 20px; border-radius: 8px; max-width: 400px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input[type=text] { width: 100%; padding: 8px; margin-top: 6px; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc; }
+        button { margin-top: 20px; padding: 10px 20px; background: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 25px; padding: 15px; border-radius: 6px; }
+        .error { background: #f8d7da; color: #842029; }
+        .weak { background: #fff3cd; color: #664d03; }
+        .strong { background: #d1e7dd; color: #0f5132; }
+        ul { margin: 10px 0 0 20px; }
+    </style>
+</head>
+<body>
+    <h1>MPIN Strength Checker</h1>
+
+    <form method="POST">
+        <label for="mpin">Enter your MPIN (4 or 6 digits):</label>
+        <input type="text" id="mpin" name="mpin" maxlength="6" pattern="\d{4}|\d{6}" title="4 or 6 digit number" required />
+
+        <label for="user_dob">Your Date of Birth (DD/MM/YYYY or YYYY-MM-DD):</label>
+        <input type="text" id="user_dob" name="user_dob" placeholder="e.g., 10/10/2002 or 2002-10-10" />
+
+        <label for="spouse_dob">Spouse Date of Birth (optional):</label>
+        <input type="text" id="spouse_dob" name="spouse_dob" placeholder="e.g., 02/05/2003 or 2003-05-02" />
+
+        <label for="anniversary">Wedding Anniversary (optional):</label>
+        <input type="text" id="anniversary" name="anniversary" placeholder="e.g., 31/10/2024 or 2024-10-31" />
+
+        <button type="submit">Check MPIN Strength</button>
+    </form>
+
+    <form method="POST" style="margin-top: 20px;">
+        <button type="submit" name="run_tests">Run Test Cases</button>
+    </form>
+    {% if result %}
+        {% if result.error %}
+            <p class="error">Error: {{ result.error }}</p>
+        {% else %}
+            <div class="result {{ 'weak' if result.strength == 'WEAK' else 'strong' }}">
+                <p><strong>Strength:</strong> {{ result.strength }}</p>
+                <p><strong>Reasons:</strong>
+                    {% if result.reasons %}
+                    <ul>
+                        {% for reason in result.reasons %}
+                            <li>{{ reason }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                        None
+                    {% endif %}
+                </p>
+            </div>
+        {% endif %}
+    {% endif %}
+    {% if test_output %}
+        <div style="white-space: pre-wrap; margin-top: 30px; padding: 15px; background: #eef; border-radius: 6px;">
+            <h3>Test Case Results:</h3>
+            <pre>{{ test_output }}</pre>
+        </div>
+    {% endif %}
+
+</body>
+</html>
